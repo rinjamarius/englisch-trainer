@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Englisch-Trainer: Zahlen (0–12) &amp; Farben</title>
+  <style>
+    /* =========================================================
+       DESIGN-TOKENS & TABLET-FIRST GRUNDLAYOUT
+       ========================================================= */
+    :root {
+      --bg-top: #eef4ff;
+      --bg-bottom: #f8fafc;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-soft: #eef2ff;
+
+      --accent: #0ea5e9;
+
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --success-border: #6ee7b7;
+
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --danger-border: #fca5a5;
+
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --warning-border: #fcd34d;
+
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-pill: 999px;
+
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 26px rgba(15, 23, 42, 0.08);
+      --shadow-btn: 0 6px 14px rgba(79, 70, 229, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: "Nunito", "Quicksand", "SF Pro Rounded", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      background: linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 36px;
+      overflow-x: hidden;
+    }
+
+    button, input {
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 14px 16px;
+    }
+
+    /* =========================================================
+       KOPFZEILE (TITEL, STERNE, SERIE, TON, NEU STARTEN)
+       ========================================================= */
+    .app-header {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 1.18rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .global-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.96rem;
+      font-weight: 800;
+    }
+
+    .stat-badge.stars {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1.5px solid #fde68a;
+    }
+
+    .stat-badge.streak {
+      background: #ffedd5;
+      color: #c2410c;
+      border: 1.5px solid #fed7aa;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* =========================================================
+       TABLET-BUTTONS (MINDESTHÖHE 56PX FÜR TOUCH)
+       ========================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: var(--radius-md);
+      min-height: 56px;
+      padding: 12px 22px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s ease, background-color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn-header {
+      min-height: 46px;
+      padding: 8px 14px;
+      font-size: 0.92rem;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-btn);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #059669;
+    }
+
+    .btn-secondary {
+      background: var(--surface-soft);
+      color: var(--text-main);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+
+    .btn-warning {
+      background: var(--warning-bg);
+      color: #b45309;
+      border: 2px solid var(--warning-border);
+    }
+
+    .btn-warning:hover:not(:disabled) {
+      background: #fef3c7;
+    }
+
+    .btn-audio {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 2px solid #bae6fd;
+    }
+
+    .btn-audio:hover:not(:disabled) {
+      background: #bae6fd;
+    }
+
+    /* =========================================================
+       MODUS-TABS (GROSSE PILL-TABS OBEN)
+       ========================================================= */
+    .stage-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+      background: var(--surface);
+      padding: 6px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stage-tab {
+      min-height: 56px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .stage-tab:hover:not(.active) {
+      background: var(--surface-soft);
+      color: var(--primary);
+    }
+
+    .stage-tab.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.28);
+    }
+
+    .stage-tab .tab-check {
+      display: none;
+      font-size: 0.95rem;
+    }
+
+    .stage-tab.completed .tab-check {
+      display: inline;
+    }
+
+    /* =========================================================
+       HAUPTKARTE / PANEL
+       ========================================================= */
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      animation: fadeIn 0.22s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-banner {
+      background: var(--primary-soft);
+      border: 1.5px solid #c7d2fe;
+      color: #312e81;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      margin: 22px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    /* =========================================================
+       MODUS 1: LERNEN (GROSSE TOUCH-KARTEN)
+       ========================================================= */
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .learn-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      border: 2.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 12px 16px;
+      min-height: 158px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+      transition: transform 0.15s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .learn-card:hover {
+      border-color: #a5b4fc;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.1);
+    }
+
+    .learn-card:active {
+      transform: scale(0.95);
+    }
+
+    .learn-card.speaking {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      animation: cardBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+    }
+
+    @keyframes cardBounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.06); }
+      70% { transform: scale(0.98); }
+      100% { transform: scale(1); }
+    }
+
+    .ripple-ring {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(79, 70, 229, 0.22);
+      transform: scale(0);
+      animation: rippleAnim 0.55s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(3.2);
+        opacity: 0;
+      }
+    }
+
+    .speaker-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    .learn-card.speaking .speaker-badge {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .number-badge {
+      width: 66px;
+      height: 66px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+      color: #ffffff;
+      font-size: 2.2rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.26);
+    }
+
+    .color-swatch {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .color-swatch.subtle-border {
+      border: 3px solid #cbd5e1;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .learn-en {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: 0.01em;
+    }
+
+    .learn-de {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .stage-footer {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       KATEGORIE-FILTER & FORTSCHRITTSBALKEN (QUIZ & SCHREIBEN)
+       ========================================================= */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      min-height: 46px;
+      background: var(--surface-soft);
+      color: var(--text-muted);
+      border: 2px solid transparent;
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .retry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1.5px solid #fca5a5;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.88rem;
+      font-weight: 800;
+      animation: pulseBadge 1.5s infinite;
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: var(--surface-soft);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #0ea5e9);
+      border-radius: var(--radius-pill);
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    /* =========================================================
+       MODUS 2: QUIZ (2x2 TOUCH-GRID AUF TABLET)
+       ========================================================= */
+    .quiz-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .question-prompt {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .cue-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .cue-number {
+      width: 104px;
+      height: 104px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+      color: #ffffff;
+      font-size: 3.3rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+    }
+
+    .cue-color {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.14), 0 10px 22px rgba(15, 23, 42, 0.14);
+    }
+
+    .cue-color.subtle-border {
+      border: 4px solid #cbd5e1;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    .cue-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .cue-german {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--text-main);
+      background: var(--surface-soft);
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+    }
+
+    .options-grid {
+      width: 100%;
+      max-width: 640px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      min-height: 70px;
+      background: var(--surface);
+      border: 2.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 14px;
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.12s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .option-btn.correct {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: #065f46;
+      animation: pop 0.28s ease;
+    }
+
+    .option-btn.wrong {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: #991b1b;
+      animation: shake 0.34s ease;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    /* =========================================================
+       MODUS 3: SCHREIBEN (KOMPAKT FÜR TABLET-TASTATUR!)
+       ========================================================= */
+    .write-compact-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .write-cue-strip {
+      width: 100%;
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .write-cue-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .cue-number.compact {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      font-size: 2.3rem;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.22);
+    }
+
+    .cue-color.compact {
+      width: 72px;
+      height: 72px;
+      box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.14), 0 6px 14px rgba(15, 23, 42, 0.12);
+    }
+
+    .write-cue-text {
+      text-align: left;
+    }
+
+    .write-cue-text .small-label {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .write-cue-text .big-de {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .write-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .write-tools .btn {
+      min-height: 50px;
+      padding: 8px 15px;
+      font-size: 0.96rem;
+    }
+
+    .hint-bar {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1.65rem;
+      font-weight: 900;
+      letter-spacing: 0.24em;
+      color: var(--primary);
+    }
+
+    .write-form {
+      width: 100%;
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .write-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 60px;
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 900;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      border: 2.5px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease;
+    }
+
+    .write-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.16);
+    }
+
+    .write-input.is-correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+      color: #065f46;
+    }
+
+    .write-input.is-wrong {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+      color: #991b1b;
+    }
+
+    .write-submit-btn {
+      min-width: 145px;
+      min-height: 60px;
+      font-size: 1.12rem;
+    }
+
+    /* =========================================================
+       FEEDBACK & BUCHSTABEN-VERGLEICH
+       ========================================================= */
+    .feedback-box {
+      width: 100%;
+      max-width: 640px;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      margin-top: 6px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.18s ease;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box.success {
+      background: var(--success-bg);
+      border: 2px solid var(--success-border);
+      color: #065f46;
+      font-size: 1.05rem;
+    }
+
+    .feedback-box.error {
+      background: var(--danger-bg);
+      border: 2px solid var(--danger-border);
+      color: #991b1b;
+    }
+
+    .letter-diff {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 8px;
+    }
+
+    .diff-char {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 40px;
+      padding: 0 6px;
+      border-radius: 9px;
+      font-size: 1.3rem;
+      font-weight: 900;
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .diff-char.ok {
+      background: #dcfce7;
+      color: #166534;
+      border: 2px solid #86efac;
+    }
+
+    .diff-char.bad {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #fca5a5;
+      text-decoration: line-through;
+    }
+
+    .diff-char.miss {
+      background: #fef3c7;
+      color: #92400e;
+      border: 2px dashed #f59e0b;
+    }
+
+    .correct-highlight {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1.5px solid #86efac;
+      padding: 2px 12px;
+      border-radius: 10px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .retry-note {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #92400e;
+      background: #fef3c7;
+      padding: 6px 12px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    /* =========================================================
+       ZUSAMMENFASSUNG & KONFETTI
+       ========================================================= */
+    .summary-box {
+      text-align: center;
+      padding: 16px 8px;
+      animation: fadeIn 0.28s ease;
+    }
+
+    .stars-display {
+      font-size: 3.2rem;
+      letter-spacing: 8px;
+      margin-bottom: 10px;
+    }
+
+    .summary-title {
+      font-size: 1.65rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .summary-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .summary-stats {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .summary-card {
+      background: var(--surface-soft);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px 22px;
+      min-width: 145px;
+    }
+
+    .summary-card .val {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .summary-card .lbl {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .missed-list {
+      max-width: 580px;
+      margin: 0 auto 22px;
+      background: var(--warning-bg);
+      border: 2px solid var(--warning-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      text-align: left;
+    }
+
+    .missed-list h3 {
+      font-size: 1.02rem;
+      color: #92400e;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .missed-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .missed-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+      background: #ffffff;
+      border: 1.5px solid #fcd34d;
+      border-radius: 12px;
+      padding: 6px 14px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .missed-chip:hover {
+      background: #fef9c3;
+    }
+
+    .missed-chip .en {
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    /* Konfetti-Canvas */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 22px;
+      border-radius: var(--radius-pill);
+      font-size: 0.95rem;
+      font-weight: 800;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================================
+       RESPONSIVE ANPASSUNGEN (HANDY & TABLET PORTRAIT/LANDSCAPE)
+       ========================================================= */
+    @media (max-width: 720px) {
+      .app-header {
+        padding: 12px 14px;
+      }
+
+      .brand-text h1 {
+        font-size: 1.05rem;
+      }
+
+      .stage-tab {
+        font-size: 0.92rem;
+        padding: 8px 6px;
+        min-height: 52px;
+      }
+
+      .panel {
+        padding: 16px 14px;
+      }
+
+      .learn-grid {
+        grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+        gap: 10px;
+      }
+
+      .options-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .write-form {
+        flex-direction: column;
+      }
+
+      .write-submit-btn {
+        width: 100%;
+      }
+
+      .write-cue-strip {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <!-- KOPFZEILE MIT GLOBALEN PUNKTEN & STEUERUNG -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🚀</div>
+        <div class="brand-text">
+          <h1>Englisch-Trainer: Zahlen (0–12) &amp; Farben</h1>
+          <p>Hören, erkennen und sicher schreiben</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="global-stats" aria-label="Punktestand">
+          <span class="stat-badge stars" id="globalStarsBadge">⭐ 0</span>
+          <span class="stat-badge streak" id="globalStreakBadge">🔥 0</span>
+        </div>
+        <div class="header-actions">
+          <button id="btnSoundToggle" class="btn btn-secondary btn-header" type="button" aria-label="Ton ein- oder ausschalten">
+            🔊 Ton an
+          </button>
+          <button id="btnGlobalRestart" class="btn btn-secondary btn-header" type="button">
+            🔄 Neu starten
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- GROSSE PILL-TABS FÜR DIE 3 MODI -->
+    <nav class="stage-nav" aria-label="Lernstufen">
+      <button class="stage-tab active" id="tab-learn" data-stage="learn" type="button">
+        <span>1. Lernen</span>
+        <span class="tab-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="stage-tab" id="tab-quiz" data-stage="quiz" type="button">
+        <span>2. Quiz</span>
+        <span class="tab-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="stage-tab" id="tab-write" data-stage="write" type="button">
+        <span>3. Schreiben</span>
+        <span class="tab-check" aria-hidden="true">✓</span>
+      </button>
+    </nav>
+
+    <!-- =====================================================
+         MODUS 1: LERNEN
+         ===================================================== -->
+    <main id="stage-learn" class="panel">
+      <div class="info-banner">
+        <span style="font-size: 1.5rem;">🎧</span>
+        <span>Tippe auf eine Karte, um das englische Wort anzuhören! Schau dir genau an, wie es geschrieben wird.</span>
+      </div>
+
+      <h2 class="section-title">🔢 Zahlen (0–12)</h2>
+      <div id="learnNumbersGrid" class="learn-grid"></div>
+
+      <h2 class="section-title">🎨 Farben</h2>
+      <div id="learnColorsGrid" class="learn-grid"></div>
+
+      <div class="stage-footer">
+        <button id="btnGoToQuiz" class="btn btn-primary" type="button">
+          Weiter zum Quiz →
+        </button>
+      </div>
+    </main>
+
+    <!-- =====================================================
+         MODUS 2: QUIZ (MULTIPLE CHOICE)
+         ===================================================== -->
+    <section id="stage-quiz" class="panel hidden">
+      <div class="filter-bar" id="quizFilterBar">
+        <button class="filter-btn active" data-filter="all" type="button">Alle (24)</button>
+        <button class="filter-btn" data-filter="number" type="button">Nur Zahlen (0–12)</button>
+        <button class="filter-btn" data-filter="color" type="button">Nur Farben</button>
+      </div>
+
+      <div id="quizPlayArea">
+        <div class="progress-header">
+          <span id="quizProgressText">Frage 1 von 24</span>
+          <span id="quizRoundScore">Richtig: 0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="quizProgressBar"></div>
+        </div>
+
+        <div class="quiz-center">
+          <div class="question-prompt" id="quizPrompt">Wie schreibt man diese Zahl auf Englisch?</div>
+
+          <div class="cue-row">
+            <div id="quizCueVisual"></div>
+            <div class="cue-meta">
+              <div class="cue-german" id="quizCueGerman">Null</div>
+              <button id="btnQuizSpeak" class="btn btn-audio btn-header" type="button">
+                🔊 Anhören
+              </button>
+            </div>
+          </div>
+
+          <div class="options-grid" id="quizOptions"></div>
+
+          <div class="feedback-box" id="quizFeedback"></div>
+
+          <button id="btnQuizNext" class="btn btn-primary hidden" type="button" style="margin-top: 12px;">
+            Weiter →
+          </button>
+        </div>
+      </div>
+
+      <div id="quizSummaryArea" class="summary-box hidden"></div>
+    </section>
+
+    <!-- =====================================================
+         MODUS 3: SCHREIBEN (KOMPAKT FÜR TABLET-TASTATUR)
+         ===================================================== -->
+    <section id="stage-write" class="panel hidden">
+      <div class="filter-bar" id="writeFilterBar">
+        <button class="filter-btn active" data-filter="all" type="button">Alle (24)</button>
+        <button class="filter-btn" data-filter="number" type="button">Nur Zahlen (0–12)</button>
+        <button class="filter-btn" data-filter="color" type="button">Nur Farben</button>
+      </div>
+
+      <div id="writePlayArea">
+        <div class="progress-header">
+          <span id="writeProgressText">Wort 1 von 24</span>
+          <span id="writeRetryPill" class="retry-pill hidden">🔁 Fehler-Runde</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="writeProgressBar"></div>
+        </div>
+
+        <div class="write-compact-top">
+          <!-- Kompakte obere Leiste: Symbol + deutsches Wort + Anhören & Tipp -->
+          <div class="write-cue-strip">
+            <div class="write-cue-left">
+              <div id="writeCueVisual"></div>
+              <div class="write-cue-text">
+                <div class="small-label" id="writePromptLabel">Schreibe auf Englisch:</div>
+                <div class="big-de" id="writeCueGerman">Zwölf</div>
+              </div>
+            </div>
+            <div class="write-tools">
+              <button id="btnWriteSpeak" class="btn btn-audio" type="button">🔊 Anhören</button>
+              <button id="btnWriteHint" class="btn btn-warning" type="button">💡 Tipp</button>
+            </div>
+          </div>
+
+          <!-- Tipp-Anzeige (z. B. t w _ _ _ _) -->
+          <div class="hint-bar" id="writeHintDisplay" aria-live="polite"></div>
+
+          <!-- Eingabezeile + Prüfen direkt nebeneinander für Tablet-Tastatur -->
+          <form id="writeForm" class="write-form" autocomplete="off">
+            <input
+              id="writeInput"
+              class="write-input"
+              type="text"
+              inputmode="text"
+              placeholder="Englisches Wort tippen..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-label="Englisches Wort eingeben"
+            />
+            <button id="btnWriteCheck" class="btn btn-primary write-submit-btn" type="submit">
+              Prüfen ✓
+            </button>
+          </form>
+
+          <div class="feedback-box" id="writeFeedback"></div>
+
+          <button id="btnWriteNext" class="btn btn-success hidden" type="button" style="margin-top: 6px; min-width: 220px;">
+            Weiter →
+          </button>
+        </div>
+      </div>
+
+      <div id="writeSummaryArea" class="summary-box hidden"></div>
+    </section>
+  </div>
+
+  <!-- TOAST-MELDUNG (KEIN alert()) -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* =========================================================
+       VOKABELDATEN: ZAHLEN 0–12 (13) & FARBEN (11) = 24 WÖRTER
+       Mit realistischen Rechtschreib-Fallen (Distraktoren)
+       ========================================================= */
+    const VOCABULARY = [
+      // Zahlen 0–12
+      { id: "n0",  type: "number", value: "0",  de: "Null",   en: "zero",   accept: ["zero"],   distractors: ["sero", "ziro", "zeero"] },
+      { id: "n1",  type: "number", value: "1",  de: "Eins",   en: "one",    accept: ["one"],    distractors: ["wan", "on", "onne"] },
+      { id: "n2",  type: "number", value: "2",  de: "Zwei",   en: "two",    accept: ["two"],    distractors: ["tow", "tu", "twoo"] },
+      { id: "n3",  type: "number", value: "3",  de: "Drei",   en: "three",  accept: ["three"],  distractors: ["tree", "thre", "thri"] },
+      { id: "n4",  type: "number", value: "4",  de: "Vier",   en: "four",   accept: ["four"],   distractors: ["for", "foor", "foure"] },
+      { id: "n5",  type: "number", value: "5",  de: "Fünf",   en: "five",   accept: ["five"],   distractors: ["fiv", "faiv", "fife"] },
+      { id: "n6",  type: "number", value: "6",  de: "Sechs",  en: "six",    accept: ["six"],    distractors: ["siks", "sics", "seks"] },
+      { id: "n7",  type: "number", value: "7",  de: "Sieben", en: "seven",  accept: ["seven"],  distractors: ["sevn", "sewen", "sefen"] },
+      { id: "n8",  type: "number", value: "8",  de: "Acht",   en: "eight",  accept: ["eight"],  distractors: ["eigt", "aight", "eightt"] },
+      { id: "n9",  type: "number", value: "9",  de: "Neun",   en: "nine",   accept: ["nine"],   distractors: ["nin", "nain", "nien"] },
+      { id: "n10", type: "number", value: "10", de: "Zehn",   en: "ten",    accept: ["ten"],    distractors: ["tan", "tenn", "tehn"] },
+      { id: "n11", type: "number", value: "11", de: "Elf",    en: "eleven", accept: ["eleven"], distractors: ["elefen", "elven", "elleven"] },
+      { id: "n12", type: "number", value: "12", de: "Zwölf",  en: "twelve", accept: ["twelve"], distractors: ["twelf", "twelv", "twevle"] },
+
+      // Farben (11)
+      { id: "c_red",    type: "color", hex: "#EF4444", de: "Rot",     en: "red",    accept: ["red"],           distractors: ["ret", "redd", "rad"] },
+      { id: "c_blue",   type: "color", hex: "#3B82F6", de: "Blau",    en: "blue",   accept: ["blue"],          distractors: ["blu", "bloo", "bluw"] },
+      { id: "c_yellow", type: "color", hex: "#FACC15", de: "Gelb",    en: "yellow", accept: ["yellow"],        distractors: ["yelow", "jellow", "yello"], subtleBorder: true },
+      { id: "c_green",  type: "color", hex: "#22C55E", de: "Grün",    en: "green",  accept: ["green"],         distractors: ["gren", "grin", "grean"] },
+      { id: "c_orange", type: "color", hex: "#F97316", de: "Orange",  en: "orange", accept: ["orange"],        distractors: ["orang", "oranje", "orenge"] },
+      { id: "c_purple", type: "color", hex: "#A855F7", de: "Lila",    en: "purple", accept: ["purple"],        distractors: ["purpel", "purpl", "parple"] },
+      { id: "c_pink",   type: "color", hex: "#EC4899", de: "Rosa",    en: "pink",   accept: ["pink"],          distractors: ["pinc", "penk", "pinke"] },
+      { id: "c_brown",  type: "color", hex: "#92400E", de: "Braun",   en: "brown",  accept: ["brown"],         distractors: ["brawn", "broun", "braun"] },
+      { id: "c_black",  type: "color", hex: "#111827", de: "Schwarz", en: "black",  accept: ["black"],         distractors: ["blak", "bleck", "bläck"] },
+      { id: "c_white",  type: "color", hex: "#FFFFFF", de: "Weiß",    en: "white",  accept: ["white"],         distractors: ["wite", "whait", "whit"], subtleBorder: true },
+      { id: "c_grey",   type: "color", hex: "#6B7280", de: "Grau",    en: "grey",   accept: ["grey", "gray"],  distractors: ["grei", "grai", "grew"] }
+    ];
+
+    /* =========================================================
+       GLOBALER ZUSTAND
+       ========================================================= */
+    const state = {
+      currentStage: "learn", // 'learn' | 'quiz' | 'write'
+      soundEnabled: true,
+      totalStars: 0,
+      currentStreak: 0,
+      completedStages: { learn: false, quiz: false, write: false },
+
+      quiz: {
+        filter: "all",
+        queue: [],
+        index: 0,
+        score: 0,
+        bestStreak: 0,
+        answered: false,
+        finished: false,
+        missedIds: new Set()
+      },
+
+      write: {
+        filter: "all",
+        queue: [],          // { item, isRetry }
+        totalInitial: 0,
+        completedInitial: 0,
+        score: 0,
+        bestStreak: 0,
+        hintLevel: 0,
+        answered: false,
+        missedIds: new Set()
+      }
+    };
+
+    /* =========================================================
+       HILFSFUNKTIONEN (SHUFFLE, AUDIO, SPRACHAUSGABE, KONFETTI)
+       ========================================================= */
+
+    /** Fisher-Yates-Shuffle für echte Zufallsreihenfolge */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /** Globale Sterne & Serie in der Kopfzeile aktualisieren */
+    function updateGlobalStatsUI() {
+      document.getElementById("globalStarsBadge").textContent = `⭐ ${state.totalStars}`;
+      document.getElementById("globalStreakBadge").textContent = `🔥 ${state.currentStreak}`;
+    }
+
+    /** Toast-Meldung am unteren Rand */
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    /** Web Audio API: Sanfte Soundeffekte ohne externe Dateien */
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSoundEffect(type) {
+      if (!state.soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === "correct") {
+          [523.25, 659.25].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + idx * 0.085);
+            gain.gain.setValueAtTime(0.001, now + idx * 0.085);
+            gain.gain.exponentialRampToValueAtTime(0.15, now + idx * 0.085 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.085 + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.085);
+            osc.stop(now + idx * 0.085 + 0.24);
+          });
+        } else if (type === "wrong") {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(215, now);
+          osc.frequency.linearRampToValueAtTime(155, now + 0.22);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.14, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.26);
+        } else if (type === "fanfare") {
+          [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            const start = now + idx * 0.095;
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.001, start);
+            gain.gain.exponentialRampToValueAtTime(0.14, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.28);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(start);
+            osc.stop(start + 0.3);
+          });
+        }
+      } catch (e) {
+        // Audio-Fehler still abfangen
+      }
+    }
+
+    /** Web Speech API: Britisches Englisch bevorzugt (en-GB -> en-US Fallback) */
+    let cachedEnglishVoice = null;
+    function loadEnglishVoice() {
+      if (!("speechSynthesis" in window)) return;
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      cachedEnglishVoice =
+        voices.find(v => v.lang === "en-GB" && /google|daniel|serena|martha|libby|kate/i.test(v.name)) ||
+        voices.find(v => v.lang === "en-GB") ||
+        voices.find(v => v.lang === "en-US") ||
+        voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) ||
+        null;
+    }
+
+    if ("speechSynthesis" in window) {
+      loadEnglishVoice();
+      window.speechSynthesis.onvoiceschanged = loadEnglishVoice;
+    }
+
+    function speakEnglish(word, forceSpeak = true) {
+      if (!forceSpeak && !state.soundEnabled) return;
+      if (!("speechSynthesis" in window)) {
+        if (forceSpeak) showToast("Sprachausgabe wird in diesem Browser leider nicht unterstützt.");
+        return;
+      }
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = cachedEnglishVoice ? cachedEnglishVoice.lang : "en-GB";
+        if (cachedEnglishVoice) utterance.voice = cachedEnglishVoice;
+        utterance.rate = 0.88;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        // Ignorieren
+      }
+    }
+
+    /** Leichtgewichtige Konfetti-Animation auf Canvas für Erfolgserlebnisse */
+    let confettiAnimId = null;
+    function launchConfetti() {
+      const canvas = document.getElementById("confettiCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#4f46e5", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#a855f7"];
+      const pieces = Array.from({ length: 85 }, () => ({
+        x: Math.random() * canvas.width,
+        y: -20 - Math.random() * 140,
+        w: 8 + Math.random() * 7,
+        h: 5 + Math.random() * 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 3.5,
+        vy: 3 + Math.random() * 4,
+        rot: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 10
+      }));
+
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+
+      let frames = 0;
+      function draw() {
+        frames++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vRot;
+          if (p.y < canvas.height + 20) alive = true;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (alive && frames < 180) {
+          confettiAnimId = requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      draw();
+    }
+
+    /** Visuelles Symbol für Zahl oder Farbe */
+    function renderVisualHTML(item, compact = false) {
+      const extraClass = compact ? " compact" : "";
+      if (item.type === "number") {
+        return `<div class="cue-number${extraClass}">${item.value}</div>`;
+      }
+      const borderCls = item.subtleBorder ? " subtle-border" : "";
+      return `<div class="cue-color${extraClass}${borderCls}" style="background-color: ${item.hex};"></div>`;
+    }
+
+    /** Gefilterte Vokabelliste abrufen */
+    function getFilteredVocab(filter) {
+      if (filter === "number") return VOCABULARY.filter(v => v.type === "number");
+      if (filter === "color") return VOCABULARY.filter(v => v.type === "color");
+      return [...VOCABULARY];
+    }
+
+    /** Sicheres Escaping für Benutzereingaben */
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /** Buchstaben-für-Buchstaben-Vergleich für den Schreibmodus */
+    function buildLetterComparisonHTML(typed, expected) {
+      const t = typed.toLowerCase();
+      const e = expected.toLowerCase();
+      const maxLen = Math.max(t.length, e.length);
+      let html = '<div class="letter-diff" aria-label="Buchstabenvergleich">';
+
+      for (let i = 0; i < maxLen; i++) {
+        const tc = t[i];
+        const ec = e[i];
+        if (tc && ec && tc === ec) {
+          html += `<span class="diff-char ok">${escapeHTML(tc)}</span>`;
+        } else if (tc && !ec) {
+          html += `<span class="diff-char bad">${escapeHTML(tc)}</span>`;
+        } else if (!tc && ec) {
+          html += `<span class="diff-char miss">_</span>`;
+        } else {
+          html += `<span class="diff-char bad">${escapeHTML(tc)}</span>`;
+        }
+      }
+      html += "</div>";
+      return html;
+    }
+
+    /* =========================================================
+       STUFEN-WECHSEL & NEUSTART
+       ========================================================= */
+    function switchStage(stageName) {
+      state.currentStage = stageName;
+
+      document.querySelectorAll(".stage-tab").forEach(tab => {
+        const s = tab.dataset.stage;
+        tab.classList.toggle("active", s === stageName);
+        tab.classList.toggle("completed", !!state.completedStages[s]);
+      });
+
+      document.getElementById("stage-learn").classList.toggle("hidden", stageName !== "learn");
+      document.getElementById("stage-quiz").classList.toggle("hidden", stageName !== "quiz");
+      document.getElementById("stage-write").classList.toggle("hidden", stageName !== "write");
+
+      if (stageName === "quiz" && state.quiz.queue.length === 0) {
+        startQuiz();
+      } else if (stageName === "write" && state.write.queue.length === 0) {
+        startWrite();
+      }
+    }
+
+    function updateCompletedBadges() {
+      document.querySelectorAll(".stage-tab").forEach(tab => {
+        tab.classList.toggle("completed", !!state.completedStages[tab.dataset.stage]);
+      });
+    }
+
+    function setActiveFilterButton(barId, filterValue) {
+      document.querySelectorAll(`#${barId} .filter-btn`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.filter === filterValue);
+      });
+    }
+
+    function globalRestart() {
+      state.totalStars = 0;
+      state.currentStreak = 0;
+      state.completedStages = { learn: false, quiz: false, write: false };
+      state.quiz.filter = "all";
+      state.write.filter = "all";
+
+      updateGlobalStatsUI();
+      updateCompletedBadges();
+      setActiveFilterButton("quizFilterBar", "all");
+      setActiveFilterButton("writeFilterBar", "all");
+
+      startQuiz();
+      startWrite(true);
+      switchStage("learn");
+      showToast("Alles neu gestartet & frisch gemischt! 🔄");
+    }
+
+    /* =========================================================
+       MODUS 1: LERNEN (KARTEN + RIPPLE & BOUNCE)
+       ========================================================= */
+    function renderLearnStage() {
+      const numbersGrid = document.getElementById("learnNumbersGrid");
+      const colorsGrid = document.getElementById("learnColorsGrid");
+      numbersGrid.innerHTML = "";
+      colorsGrid.innerHTML = "";
+
+      VOCABULARY.forEach(item => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "learn-card";
+        card.setAttribute("aria-label", `${item.de} auf Englisch: ${item.en}. Tippen zum Anhören.`);
+
+        const visual = item.type === "number"
+          ? `<div class="number-badge">${item.value}</div>`
+          : `<div class="color-swatch ${item.subtleBorder ? "subtle-border" : ""}" style="background-color: ${item.hex};"></div>`;
+
+        card.innerHTML = `
+          <span class="speaker-badge" aria-hidden="true">🔊</span>
+          ${visual}
+          <span class="learn-en">${item.en}</span>
+          <span class="learn-de">${item.de}</span>
+        `;
+
+        card.addEventListener("click", (e) => {
+          // Ripple-Effekt an der Tipp-Position
+          const rect = card.getBoundingClientRect();
+          const ripple = document.createElement("span");
+          ripple.className = "ripple-ring";
+          const size = Math.max(rect.width, rect.height) * 0.6;
+          ripple.style.width = `${size}px`;
+          ripple.style.height = `${size}px`;
+          ripple.style.left = `${(e.clientX || rect.left + rect.width / 2) - rect.left - size / 2}px`;
+          ripple.style.top = `${(e.clientY || rect.top + rect.height / 2) - rect.top - size / 2}px`;
+          card.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
+
+          document.querySelectorAll(".learn-card.speaking").forEach(el => el.classList.remove("speaking"));
+          card.classList.add("speaking");
+          speakEnglish(item.en, true);
+          setTimeout(() => card.classList.remove("speaking"), 650);
+        });
+
+        if (item.type === "number") {
+          numbersGrid.appendChild(card);
+        } else {
+          colorsGrid.appendChild(card);
+        }
+      });
+    }
+
+    /* =========================================================
+       MODUS 2: QUIZ (MULTIPLE CHOICE + FEHLER WIEDERHOLEN)
+       ========================================================= */
+    function startQuiz(specificItems = null) {
+      const source = specificItems ? [...specificItems] : getFilteredVocab(state.quiz.filter);
+      state.quiz.queue = shuffleArray(source);
+      state.quiz.index = 0;
+      state.quiz.score = 0;
+      state.quiz.bestStreak = 0;
+      state.quiz.answered = false;
+      state.quiz.finished = false;
+      state.quiz.missedIds = new Set();
+
+      document.getElementById("quizPlayArea").classList.remove("hidden");
+      document.getElementById("quizSummaryArea").classList.add("hidden");
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const q = state.quiz;
+      if (q.index >= q.queue.length) {
+        showQuizSummary();
+        return;
+      }
+
+      const item = q.queue[q.index];
+      q.answered = false;
+
+      document.getElementById("quizProgressText").textContent = `Frage ${q.index + 1} von ${q.queue.length}`;
+      document.getElementById("quizRoundScore").textContent = `Richtig: ${q.score}`;
+      document.getElementById("quizProgressBar").style.width = `${Math.round((q.index / q.queue.length) * 100)}%`;
+
+      document.getElementById("quizPrompt").textContent =
+        item.type === "number"
+          ? "Wie schreibt man diese Zahl auf Englisch?"
+          : "Wie schreibt man diese Farbe auf Englisch?";
+
+      document.getElementById("quizCueVisual").innerHTML = renderVisualHTML(item, false);
+      document.getElementById("quizCueGerman").textContent = item.de;
+
+      const fb = document.getElementById("quizFeedback");
+      fb.className = "feedback-box";
+      fb.innerHTML = "";
+      document.getElementById("btnQuizNext").classList.add("hidden");
+
+      // 1 richtige Antwort + 3 Rechtschreib-Fallen mischen
+      const options = shuffleArray([item.en, ...item.distractors.slice(0, 3)]);
+      const optionsContainer = document.getElementById("quizOptions");
+      optionsContainer.innerHTML = "";
+
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.textContent = opt;
+        btn.addEventListener("click", () => handleQuizAnswer(btn, opt, item));
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function handleQuizAnswer(clickedBtn, selectedText, item) {
+      const q = state.quiz;
+      if (q.answered) return;
+      q.answered = true;
+
+      document.querySelectorAll("#quizOptions .option-btn").forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === item.en) btn.classList.add("correct");
+      });
+
+      const fb = document.getElementById("quizFeedback");
+
+      if (selectedText === item.en) {
+        q.score++;
+        state.totalStars++;
+        state.currentStreak++;
+        if (state.currentStreak > q.bestStreak) q.bestStreak = state.currentStreak;
+        playSoundEffect("correct");
+        setTimeout(() => speakEnglish(item.en, false), 220);
+
+        fb.className = "feedback-box success show";
+        fb.innerHTML = `✅ Super! <strong>${item.de}</strong> schreibt man <strong>${item.en}</strong>!`;
+      } else {
+        clickedBtn.classList.add("wrong");
+        state.currentStreak = 0;
+        q.missedIds.add(item.id);
+        playSoundEffect("wrong");
+        setTimeout(() => speakEnglish(item.en, false), 260);
+
+        fb.className = "feedback-box error show";
+        fb.innerHTML = `❌ Nicht ganz! Richtig wäre: <span class="correct-highlight">${item.en}</span>`;
+      }
+
+      updateGlobalStatsUI();
+      document.getElementById("quizRoundScore").textContent = `Richtig: ${q.score}`;
+      document.getElementById("quizProgressBar").style.width = `${Math.round(((q.index + 1) / q.queue.length) * 100)}%`;
+
+      const nextBtn = document.getElementById("btnQuizNext");
+      nextBtn.textContent = q.index + 1 < q.queue.length ? "Nächste Frage →" : "Ergebnis anzeigen 🏆";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function showQuizSummary() {
+      const q = state.quiz;
+      q.finished = true;
+      state.completedStages.quiz = true;
+      updateCompletedBadges();
+      playSoundEffect("fanfare");
+      launchConfetti();
+
+      document.getElementById("quizPlayArea").classList.add("hidden");
+      const summary = document.getElementById("quizSummaryArea");
+      summary.classList.remove("hidden");
+
+      const ratio = q.queue.length > 0 ? q.score / q.queue.length : 1;
+      const starsCount = ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : 1;
+      const starsStr = "⭐".repeat(starsCount) + "☆".repeat(3 - starsCount);
+
+      let headline = "Klasse gemacht!";
+      if (q.missedIds.size === 0) headline = "Perfekt! Alles richtig erkannt!";
+      else if (starsCount === 3) headline = "Fantastisch! Du bist schon ein Profi!";
+      else if (starsCount === 2) headline = "Super gemacht! Fast alles richtig!";
+
+      const missedItems = VOCABULARY.filter(v => q.missedIds.has(v.id));
+      let missedHTML = "";
+      if (missedItems.length > 0) {
+        const chips = missedItems
+          .map(item => `
+            <button type="button" class="missed-chip" data-speak="${item.en}">
+              <span>🔊</span>
+              <span>${item.de}</span>
+              <span>→</span>
+              <span class="en">${item.en}</span>
+            </button>
+          `)
+          .join("");
+        missedHTML = `
+          <div class="missed-list">
+            <h3>📝 Diese Wörter kannst du nochmal üben:</h3>
+            <div class="missed-items">${chips}</div>
+          </div>
+        `;
+      }
+
+      const retryBtnHTML = missedItems.length > 0
+        ? `<button id="btnQuizRetryMissed" class="btn btn-warning" type="button">🎯 Fehler wiederholen (${missedItems.length})</button>`
+        : "";
+
+      summary.innerHTML = `
+        <div class="stars-display" aria-label="${starsCount} von 3 Sternen">${starsStr}</div>
+        <h2 class="summary-title">${headline}</h2>
+        <p class="summary-subtitle">Jetzt bist du bereit für die Schreib-Übung!</p>
+        <div class="summary-stats">
+          <div class="summary-card">
+            <div class="val">${q.score} / ${q.queue.length}</div>
+            <div class="lbl">Richtig</div>
+          </div>
+          <div class="summary-card">
+            <div class="val">🔥 ${q.bestStreak}</div>
+            <div class="lbl">Beste Serie</div>
+          </div>
+        </div>
+        ${missedHTML}
+        <div class="stage-footer">
+          ${retryBtnHTML}
+          <button id="btnQuizReplay" class="btn btn-secondary" type="button">🔄 Nochmal spielen</button>
+          <button id="btnQuizToWrite" class="btn btn-primary" type="button">Weiter zum Schreiben →</button>
+        </div>
+      `;
+
+      summary.querySelectorAll(".missed-chip").forEach(chip => {
+        chip.addEventListener("click", () => speakEnglish(chip.dataset.speak, true));
+      });
+
+      if (missedItems.length > 0) {
+        document.getElementById("btnQuizRetryMissed").addEventListener("click", () => startQuiz(missedItems));
+      }
+      document.getElementById("btnQuizReplay").addEventListener("click", () => startQuiz(null));
+      document.getElementById("btnQuizToWrite").addEventListener("click", () => {
+        startWrite(false, null);
+        switchStage("write");
+      });
+    }
+
+    /* =========================================================
+       MODUS 3: SCHREIBEN (TIPP, VERGLEICH & FEHLER-RUNDE)
+       ========================================================= */
+    function startWrite(silent = false, specificItems = null) {
+      const w = state.write;
+      const source = specificItems ? [...specificItems] : getFilteredVocab(w.filter);
+      const shuffled = shuffleArray(source);
+
+      w.queue = shuffled.map(item => ({ item, isRetry: false }));
+      w.totalInitial = shuffled.length;
+      w.completedInitial = 0;
+      w.score = 0;
+      w.bestStreak = 0;
+      w.hintLevel = 0;
+      w.answered = false;
+      w.missedIds = new Set();
+
+      document.getElementById("writePlayArea").classList.remove("hidden");
+      document.getElementById("writeSummaryArea").classList.add("hidden");
+
+      renderWriteQuestion(!silent);
+    }
+
+    function renderWriteQuestion(shouldFocus = true) {
+      const w = state.write;
+      if (w.queue.length === 0) {
+        showWriteSummary();
+        return;
+      }
+
+      const currentEntry = w.queue[0];
+      const item = currentEntry.item;
+      w.answered = false;
+      w.hintLevel = 0;
+
+      const retryPill = document.getElementById("writeRetryPill");
+      if (currentEntry.isRetry) {
+        retryPill.classList.remove("hidden");
+        document.getElementById("writeProgressText").textContent =
+          `Fehler-Runde: noch ${w.queue.length} ${w.queue.length === 1 ? "Wort" : "Wörter"}`;
+      } else {
+        retryPill.classList.add("hidden");
+        const num = Math.min(w.completedInitial + 1, w.totalInitial);
+        document.getElementById("writeProgressText").textContent = `Wort ${num} von ${w.totalInitial}`;
+      }
+
+      const pct = w.totalInitial > 0 ? Math.round((w.completedInitial / w.totalInitial) * 100) : 0;
+      document.getElementById("writeProgressBar").style.width = `${Math.min(pct, 100)}%`;
+
+      document.getElementById("writePromptLabel").textContent =
+        item.type === "number" ? "Schreibe diese Zahl auf Englisch:" : "Schreibe diese Farbe auf Englisch:";
+      document.getElementById("writeCueVisual").innerHTML = renderVisualHTML(item, true);
+      document.getElementById("writeCueGerman").textContent = item.de;
+
+      document.getElementById("writeHintDisplay").textContent = "";
+      const input = document.getElementById("writeInput");
+      input.value = "";
+      input.disabled = false;
+      input.className = "write-input";
+
+      document.getElementById("btnWriteCheck").classList.remove("hidden");
+      document.getElementById("btnWriteHint").disabled = false;
+
+      const fb = document.getElementById("writeFeedback");
+      fb.className = "feedback-box";
+      fb.innerHTML = "";
+      document.getElementById("btnWriteNext").classList.add("hidden");
+
+      if (shouldFocus && state.currentStage === "write") {
+        setTimeout(() => input.focus(), 50);
+      }
+    }
+
+    function revealWriteHint() {
+      const w = state.write;
+      if (w.answered || w.queue.length === 0) return;
+
+      const word = w.queue[0].item.en;
+      w.hintLevel++;
+      const showCount = Math.min(w.hintLevel, word.length);
+      const masked = word
+        .split("")
+        .map((ch, idx) => (idx < showCount ? ch : "_"))
+        .join(" ");
+
+      document.getElementById("writeHintDisplay").textContent = masked;
+      document.getElementById("writeInput").focus();
+    }
+
+    function handleWriteSubmit(e) {
+      e.preventDefault();
+      const w = state.write;
+
+      if (w.answered) {
+        renderWriteQuestion(true);
+        return;
+      }
+
+      if (w.queue.length === 0) return;
+
+      const input = document.getElementById("writeInput");
+      const rawTyped = input.value.trim();
+      if (!rawTyped) {
+        showToast("Bitte tippe zuerst ein englisches Wort ein! ✍️");
+        input.focus();
+        return;
+      }
+
+      const typedLower = rawTyped.toLowerCase();
+      const currentEntry = w.queue[0];
+      const item = currentEntry.item;
+      const isCorrect = item.accept.includes(typedLower);
+
+      w.answered = true;
+      input.disabled = true;
+      document.getElementById("btnWriteCheck").classList.add("hidden");
+      document.getElementById("btnWriteHint").disabled = true;
+
+      const fb = document.getElementById("writeFeedback");
+
+      if (isCorrect) {
+        input.classList.add("is-correct");
+        playSoundEffect("correct");
+        setTimeout(() => speakEnglish(item.en, false), 220);
+
+        state.totalStars++;
+        state.currentStreak++;
+        if (state.currentStreak > w.bestStreak) w.bestStreak = state.currentStreak;
+
+        if (!currentEntry.isRetry) {
+          w.score++;
+          w.completedInitial++;
+        }
+        w.queue.shift();
+
+        const extraNote = (item.en === "grey" && typedLower === "gray")
+          ? ` (<strong>grey</strong> und <strong>gray</strong> sind beide richtig!)`
+          : "";
+
+        fb.className = "feedback-box success show";
+        fb.innerHTML = `✅ Perfekt! <strong>${item.de}</strong> heißt <strong>${item.en}</strong>!${extraNote}`;
+      } else {
+        input.classList.add("is-wrong");
+        playSoundEffect("wrong");
+        setTimeout(() => speakEnglish(item.en, false), 260);
+
+        state.currentStreak = 0;
+        w.missedIds.add(item.id);
+
+        if (!currentEntry.isRetry) {
+          w.completedInitial++;
+        }
+        w.queue.shift();
+        w.queue.push({ item, isRetry: true });
+
+        const diffHTML = buildLetterComparisonHTML(rawTyped, item.en);
+        fb.className = "feedback-box error show";
+        fb.innerHTML = `
+          <div>❌ Fast! Vergleiche deine Buchstaben:</div>
+          ${diffHTML}
+          <div>Richtig wäre: <span class="correct-highlight">${item.en}</span></div>
+          <div class="retry-note">🔁 Dieses Wort kommt gleich nochmal in der Fehler-Runde!</div>
+        `;
+      }
+
+      updateGlobalStatsUI();
+      const pct = w.totalInitial > 0 ? Math.round((w.completedInitial / w.totalInitial) * 100) : 0;
+      document.getElementById("writeProgressBar").style.width = `${Math.min(pct, 100)}%`;
+
+      const nextBtn = document.getElementById("btnWriteNext");
+      nextBtn.textContent = w.queue.length > 0 ? "Weiter →" : "Ergebnis anzeigen 🏆";
+      nextBtn.classList.remove("hidden");
+      nextBtn.focus();
+    }
+
+    function showWriteSummary() {
+      const w = state.write;
+      state.completedStages.write = true;
+      updateCompletedBadges();
+      playSoundEffect("fanfare");
+      launchConfetti();
+
+      document.getElementById("writePlayArea").classList.add("hidden");
+      const summary = document.getElementById("writeSummaryArea");
+      summary.classList.remove("hidden");
+
+      const ratio = w.totalInitial > 0 ? w.score / w.totalInitial : 1;
+      const starsCount = ratio >= 0.9 ? 3 : ratio >= 0.65 ? 2 : 1;
+      const starsStr = "⭐".repeat(starsCount) + "☆".repeat(3 - starsCount);
+
+      let headline = "Stark durchgehalten!";
+      if (w.missedIds.size === 0) headline = "Unglaublich! Alles fehlerfrei geschrieben!";
+      else if (starsCount === 3) headline = "Super Leistung! Du schreibst schon sehr sicher!";
+      else if (starsCount === 2) headline = "Toll gemacht! Du wirst immer besser!";
+
+      const missedItems = VOCABULARY.filter(v => w.missedIds.has(v.id));
+      let missedHTML = "";
+      if (missedItems.length > 0) {
+        const chips = missedItems
+          .map(item => `
+            <button type="button" class="missed-chip" data-speak="${item.en}">
+              <span>🔊</span>
+              <span>${item.de}</span>
+              <span>→</span>
+              <span class="en">${item.en}</span>
+            </button>
+          `)
+          .join("");
+        missedHTML = `
+          <div class="missed-list">
+            <h3>📝 Wörter, die du noch einmal extra üben kannst:</h3>
+            <div class="missed-items">${chips}</div>
+          </div>
+        `;
+      }
+
+      const retryBtnHTML = missedItems.length > 0
+        ? `<button id="btnWriteRetryMissed" class="btn btn-warning" type="button">🎯 Fehler wiederholen (${missedItems.length})</button>`
+        : "";
+
+      summary.innerHTML = `
+        <div class="stars-display" aria-label="${starsCount} von 3 Sternen">${starsStr}</div>
+        <h2 class="summary-title">${headline}</h2>
+        <p class="summary-subtitle">Du hast alle Wörter bis zum Ende richtig geschrieben!</p>
+        <div class="summary-stats">
+          <div class="summary-card">
+            <div class="val">${w.score} / ${w.totalInitial}</div>
+            <div class="lbl">Sofort richtig</div>
+          </div>
+          <div class="summary-card">
+            <div class="val">🔥 ${w.bestStreak}</div>
+            <div class="lbl">Beste Serie</div>
+          </div>
+        </div>
+        ${missedHTML}
+        <div class="stage-footer">
+          ${retryBtnHTML}
+          <button id="btnWriteAgain" class="btn btn-primary" type="button">✍️ Nochmal schreiben</button>
+          <button id="btnWriteRestart" class="btn btn-secondary" type="button">🔄 Neu starten</button>
+        </div>
+      `;
+
+      summary.querySelectorAll(".missed-chip").forEach(chip => {
+        chip.addEventListener("click", () => speakEnglish(chip.dataset.speak, true));
+      });
+
+      if (missedItems.length > 0) {
+        document.getElementById("btnWriteRetryMissed").addEventListener("click", () => startWrite(false, missedItems));
+      }
+      document.getElementById("btnWriteAgain").addEventListener("click", () => startWrite(false, null));
+      document.getElementById("btnWriteRestart").addEventListener("click", globalRestart);
+    }
+
+    /* =========================================================
+       INITIALISIERUNG & EVENT-LISTENER
+       ========================================================= */
+    function initApp() {
+      renderLearnStage();
+      updateGlobalStatsUI();
+
+      // Ton an/aus
+      document.getElementById("btnSoundToggle").addEventListener("click", () => {
+        state.soundEnabled = !state.soundEnabled;
+        document.getElementById("btnSoundToggle").textContent = state.soundEnabled ? "🔊 Ton an" : "🔇 Ton aus";
+      });
+
+      // Globaler Neustart
+      document.getElementById("btnGlobalRestart").addEventListener("click", globalRestart);
+
+      // Modus-Tabs
+      document.querySelectorAll(".stage-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          if (tab.dataset.stage === "learn") state.completedStages.learn = true;
+          switchStage(tab.dataset.stage);
+        });
+      });
+
+      // Lernen -> Quiz
+      document.getElementById("btnGoToQuiz").addEventListener("click", () => {
+        state.completedStages.learn = true;
+        updateCompletedBadges();
+        startQuiz(null);
+        switchStage("quiz");
+      });
+
+      // Quiz-Filter & Buttons
+      document.querySelectorAll("#quizFilterBar .filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.quiz.filter = btn.dataset.filter;
+          setActiveFilterButton("quizFilterBar", state.quiz.filter);
+          startQuiz(null);
+        });
+      });
+
+      document.getElementById("btnQuizSpeak").addEventListener("click", () => {
+        const item = state.quiz.queue[state.quiz.index];
+        if (item) speakEnglish(item.en, true);
+      });
+
+      document.getElementById("btnQuizNext").addEventListener("click", () => {
+        state.quiz.index++;
+        renderQuizQuestion();
+      });
+
+      // Schreiben-Filter & Buttons
+      document.querySelectorAll("#writeFilterBar .filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.write.filter = btn.dataset.filter;
+          setActiveFilterButton("writeFilterBar", state.write.filter);
+          startWrite(false, null);
+        });
+      });
+
+      document.getElementById("btnWriteSpeak").addEventListener("click", () => {
+        if (state.write.queue.length > 0) {
+          speakEnglish(state.write.queue[0].item.en, true);
+          document.getElementById("writeInput").focus();
+        }
+      });
+
+      document.getElementById("btnWriteHint").addEventListener("click", revealWriteHint);
+      document.getElementById("writeForm").addEventListener("submit", handleWriteSubmit);
+      document.getElementById("btnWriteNext").addEventListener("click", () => renderWriteQuestion(true));
+
+      // Enter im Quiz zum schnellen Weitergehen
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && state.currentStage === "quiz" && state.quiz.answered && !state.quiz.finished) {
+          e.preventDefault();
+          state.quiz.index++;
+          renderQuizQuestion();
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>
